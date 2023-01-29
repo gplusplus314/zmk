@@ -40,10 +40,10 @@
 
 / {
     combos {
-        compatible = "zmk,combos";
+      compatible = "zmk,combos";
 
-    // shortcut
-    #define COMBO(NAME, BINDINGS, KEYPOS, TIMEOUT) \
+      // shortcut
+      #define COMBO(NAME, BINDINGS, KEYPOS, TIMEOUT) \
       combo_##NAME { \
         timeout-ms = <TIMEOUT>; \
         bindings = <BINDINGS>; \
@@ -59,12 +59,21 @@
         ╰───────╮ 30  31  32 │ │ 33  34  35 ╭───────╯
                 ╰────────────╯ ╰────────────╯        */
 
+      COMBO(slop_j, &kp J, 5 15, 40)
+      COMBO(slop_j, &kp J, 5 6, 40)
+      COMBO(slop_k, &kp K, 15 25, 40)
+      COMBO(slop_k, &kp K, 25 26, 40)
+      COMBO(slop_b, &kp B, 4 14, 40)
+      COMBO(slop_b, &kp B, 3 4, 40)
+      COMBO(slop_v, &kp V, 14 24, 40)
+      COMBO(slop_v, &kp V, 23 24, 40)
+
       COMBO(capsword, &caps_word, 10 19, 40)
       
-      COMBO(quote, &kp SQT, 16 17, 40)
+      COMBO(quote, &kp SQT, 16 17, 30)
       COMBO(minus, &kp MINUS, 26 17, 40)
 
-      COMBO(tab, &kp TAB, 12 13, 40)
+      COMBO(tab, &kp TAB, 12 13, 30)
       COMBO(equal, &kp EQUAL, 12 23, 40)
 
       COMBO(lprn, G_LPRN, 3 13, 40)
@@ -110,6 +119,7 @@
         tapping-term-ms = <150>;
         quick-tap-ms = <150>;
         bindings = <&kp>, <&kp>;
+        hold-trigger-key-positions = <10 19 33 34>;
       };
 
       glt: gerrys_layer_tap {
@@ -148,19 +158,19 @@
 
 		navsym_layer {
 			bindings = <
-        &trans       &kp HOME      &kp UP       &kp END             AS(EQUAL)             /*& &*/     AS(LBKT)            AS(N4)           AS(N5)                   AS(N6)        &trans     
-        &trans       &kp LEFT      &kp DOWN     &kp RIGHT           AS(MINUS)             /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)                   AS(N3)        G_N0
+        &trans       &kp HOME      &kp UP       &kp END             AS(EQUAL)             /*& &*/     AS(LBKT)            AS(N4)           AS(N5)                   AS(N6)        &prht RALT DOT
+        &trans       &kp LEFT      &kp DOWN     &kp RIGHT           AS(MINUS)             /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)                   AS(N3)        AS(N0)
         &trans       G_LBRC        G_LPRN       G_RPRN              G_RBRC                /*& &*/     AS(RBKT)            AS(N7)           AS(N8)                   AS(N9)        AS(BSLH)
-        /*&    &*/                     &trans        &ght LCTRL LC(SPC) &ght LGUI LG(SPC) /*& &*/ &trans         &trans           &trans                /* &             &*/
+        /*&    &*/                     &trans        &trans             &trans            /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
 		};
 
 		navfn_layer {
 			bindings = <
-        &trans       &kp HOME      &kp UP       &kp END             &trans        /*& &*/     &trans              &kp F4           &kp F5                   &kp F6        &kp F11   
-        &trans       &kp LEFT      &kp DOWN     &kp RIGHT           &trans        /*& &*/     &trans              &kp F1           &kp F2                   &kp F3        &kp F10
-        &trans       &trans        &trans       &trans              &trans        /*& &*/     &trans              &kp F7           &kp F8                   &kp F9        &kp F12
-        /*&    &*/                     &trans        &trans             &trans    /*& &*/ &trans         &trans           &trans                /* &             &*/
+        &trans       &trans        &trans       &trans              &trans                /*& &*/     &trans              &kp F4           &kp F5                   &kp F6        &kp F11   
+        &trans       &trans        &trans       &trans              &trans                /*& &*/     &trans              &kp F1           &kp F2                   &kp F3        &kp F10
+        &trans       &trans        &trans       &trans              &trans                /*& &*/     &trans              &kp F7           &kp F8                   &kp F9        &kp F12
+        /*&    &*/                     &trans        &ght LCTRL LC(SPC) &ght LGUI LG(SPC) /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
 		};
 
