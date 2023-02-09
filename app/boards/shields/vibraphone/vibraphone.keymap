@@ -15,16 +15,17 @@
 #define BASE_L    0
 #define NAVSYM_L  1
 #define NAVFN_L   2
-#define STNGS_L   3
+#define WM_L      3
+#define STNGS_L   4
 
-#define G_Q    &plht LALT         Q
+#define G_Q    &plht LGUI         Q
 #define G_A    &plht LSHFT        A
 #define G_O    &prht RSHFT        O
 #define G_N0   &prht RSHFT        N0
-#define G_SEMI &prht RALT         SEMI
+#define G_SEMI &prht RGUI         SEMI
 #define G_SPC  &ght  LCTRL        SPC
-#define G_ESC  &ght  LGUI         ESC
-#define G_RET  &glt  NAVFN_L      RET
+#define G_ESC  &ght  LALT         ESC
+#define G_RET  &glt  WM_L         RET
 #define G_BSPC &glt  NAVSYM_L     BSPC
 
 #define AS(keycode) &as LS(keycode) keycode     // Standard Autoshift Macro
@@ -70,16 +71,20 @@
 
       COMBO(capsword, &caps_word, 10 19, 40)
       
-      COMBO(quote, &kp SQT, 16 17, 30)
+      COMBO(quote, &kp SQT, 16 17, 25)
       COMBO(minus, &kp MINUS, 26 17, 40)
 
-      COMBO(tab, &kp TAB, 12 13, 30)
+      COMBO(tab, &kp TAB, 12 13, 25)
       COMBO(equal, &kp EQUAL, 12 23, 40)
 
-      COMBO(lprn, G_LPRN, 3 13, 40)
-      COMBO(rprn, G_RPRN, 6 16, 40)
-      COMBO(lbrc, G_LBRC, 2 12, 40)
-      COMBO(rbrc, G_RBRC, 7 17, 40)
+      COMBO(prevwin, AS(LG(UP)), 3 13, 40)
+      COMBO(nextwin, AS(LG(DOWN)), 6 16, 40)
+      //COMBO(lprn, G_LPRN, 3 13, 40)
+      //COMBO(rprn, G_RPRN, 6 16, 40)
+      //COMBO(lbrc, G_LBRC, 2 12, 40)
+      //COMBO(rbrc, G_RBRC, 7 17, 40)
+
+      COMBO(fnlayer, &mo NAVFN_L, 4 14, 40)
 
       COMBO(under, &kp UNDER, 31 32, 40)
 
@@ -159,7 +164,7 @@
 		navsym_layer {
 			bindings = <
         &trans       &kp HOME      &kp UP       &kp END             AS(EQUAL)             /*& &*/     AS(LBKT)            AS(N4)           AS(N5)                   AS(N6)        &prht RALT DOT
-        &trans       &kp LEFT      &kp DOWN     &kp RIGHT           AS(MINUS)             /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)                   AS(N3)        AS(N0)
+        &trans       &kp LEFT      &kp DOWN     &kp RIGHT           AS(MINUS)             /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)                   AS(N3)        G_N0
         &trans       G_LBRC        G_LPRN       G_RPRN              G_RBRC                /*& &*/     AS(RBKT)            AS(N7)           AS(N8)                   AS(N9)        AS(BSLH)
         /*&    &*/                     &trans        &trans             &trans            /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
@@ -167,10 +172,19 @@
 
 		navfn_layer {
 			bindings = <
-        &trans       &trans        &trans       &trans              &trans                /*& &*/     &trans              &kp F4           &kp F5                   &kp F6        &kp F11   
-        &trans       &trans        &trans       &trans              &trans                /*& &*/     &trans              &kp F1           &kp F2                   &kp F3        &kp F10
-        &trans       &trans        &trans       &trans              &trans                /*& &*/     &trans              &kp F7           &kp F8                   &kp F9        &kp F12
-        /*&    &*/                     &trans        &ght LCTRL LC(SPC) &ght LGUI LG(SPC) /*& &*/ &trans         &trans           &trans                /* &             &*/
+        &trans       &trans        &trans       &trans              &trans                /*& &*/     &kp C_VOL_UP        &kp F4           &kp F5                   &kp F6        &kp F11   
+        &trans       &trans        &trans       &trans              &trans                /*& &*/     &kp K_MUTE          &kp F1           &kp F2                   &kp F3        &kp F10
+        &trans       &trans        &trans       &trans              &trans                /*& &*/     &kp C_VOL_DN        &kp F7           &kp F8                   &kp F9        &kp F12
+        /*&    &*/                     &trans        &trans             &trans            /*& &*/ &trans         &trans           &trans                /* &             &*/
+			>;
+		};
+
+		wm_layer {
+			bindings = <
+        &trans       &trans        &trans        &trans             &trans         /*& &*/     &trans              AS(LG(N4))       AS(LG(N5))               AS(LG(N6))    AS(LG(RIGHT))
+        &trans       &trans        &trans        &trans             &trans         /*& &*/     &trans              AS(LG(N1))       AS(LG(N2))               AS(LG(N3))    AS(LG(N0))    
+        &trans       &trans        &trans        &trans             &trans         /*& &*/     &trans              AS(LG(N7))       AS(LG(N8))               AS(LG(N9))    AS(LG(LEFT))
+        /*&    &*/                     &trans &ght LCTRL LC(SPC) &ght LALT LG(SPC) /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
 		};
 
