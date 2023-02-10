@@ -175,7 +175,7 @@
 
 		navsym_layer {
 			bindings = <
-        &trans       &kp HOME      &kp UP       &kp END             AS(EQUAL)             /*& &*/     AS(LBKT)            AS(N4)           AS(N5)                   AS(N6)        &prht RALT DOT
+        &trans       &kp HOME      &kp UP       &kp END             AS(EQUAL)             /*& &*/     AS(LBKT)            AS(N4)           AS(N5)                   AS(N6)        &prht RGUI DOT
         &trans       &kp LEFT      &kp DOWN     &kp RIGHT           AS(MINUS)             /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)                   AS(N3)        G_N0
         &trans       G_LBRC        G_LPRN       G_RPRN              G_RBRC                /*& &*/     AS(RBKT)            AS(N7)           AS(N8)                   AS(N9)        AS(BSLH)
         /*&    &*/                     &trans        &trans             &trans            /*& &*/ &trans         &trans           &trans                /* &             &*/
@@ -184,10 +184,10 @@
 
 		navfn_layer {
 			bindings = <
-        &trans       &trans        &trans       &trans              &trans                /*& &*/     &kp C_VOL_UP        &kp F4           &kp F5                   &kp F6        &kp F11   
-        &kp LSHFT    &kp LGUI      &kp LALT     &kp LCTRL           &trans                /*& &*/     &kp K_MUTE          G_F1             G_F2                     G_F3          G_F10
-        &trans       &trans        &trans       &trans              &trans                /*& &*/     &kp C_VOL_DN        &kp F7           &kp F8                   &kp F9        &kp F12
-        /*&    &*/                     &trans        &trans             &trans            /*& &*/ &trans         &trans           &trans                /* &             &*/
+        &trans       &trans        &trans       &trans              &trans                 /*& &*/     &kp C_VOL_UP        &kp F4           &kp F5                   &kp F6        &kp F11   
+        &kp LSHFT    &kp LGUI      &kp LALT     &kp LCTRL           &trans                 /*& &*/     &kp K_MUTE          G_F1             G_F2                     G_F3          G_F10
+        &trans       &trans        &trans       &trans              &trans                 /*& &*/     &kp C_VOL_DN        &kp F7           &kp F8                   &kp F9        &kp F12
+        /*&    &*/                     &trans     &plht LCTRL LC(SPC)   &plht LALT LA(ESC) /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
 		};
 
