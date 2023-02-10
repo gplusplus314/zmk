@@ -18,15 +18,21 @@
 #define WM_L      3
 #define STNGS_L   4
 
-#define G_Q    &plht LGUI         Q
-#define G_A    &plht LSHFT        A
-#define G_O    &prht RSHFT        O
-#define G_N0   &prht RSHFT        N0
-#define G_SEMI &prht RGUI         SEMI
-#define G_SPC  &ght  LCTRL        SPC
-#define G_ESC  &ght  LALT         ESC
-#define G_RET  &glt  WM_L         RET
-#define G_BSPC &glt  NAVSYM_L     BSPC
+#define G_Q     &plht LGUI         Q
+#define G_A     &plht LSHFT        A
+#define G_O     &prht RSHFT        O
+#define G_N0    &prht RSHFT        N0
+#define G_SEMI  &prht RGUI         SEMI
+#define G_SPC   &ght  LCTRL        SPC
+#define G_ESC   &ght  LALT         ESC
+#define G_RET   &glt  WM_L         RET
+#define G_BSPC  &glt  NAVSYM_L     BSPC
+#define G_DEL   &glt  NAVFN_L      DEL
+#define G_F10   &prht RSHFT        F10
+#define G_F3    &prht RGUI         F3
+#define G_F2    &prht RALT         F2
+#define G_F1    &prht RCTRL        F1
+#define G_UNDER &ght LA(LCTRL)     UNDER
 
 #define AS(keycode) &as LS(keycode) keycode     // Standard Autoshift Macro
 #define AS2(key1, key2) &as key2 key1           // Custom Autoshift Macro
@@ -44,11 +50,12 @@
       compatible = "zmk,combos";
 
       // shortcut
-      #define COMBO(NAME, BINDINGS, KEYPOS, TIMEOUT) \
+      #define COMBO(NAME, BINDINGS, KEYPOS, TIMEOUT, LAYERS) \
       combo_##NAME { \
         timeout-ms = <TIMEOUT>; \
         bindings = <BINDINGS>; \
         key-positions = <KEYPOS>; \
+        layers = <LAYERS>; \
       };
 
       /*                KEY POSITIONS
@@ -60,37 +67,31 @@
         ╰───────╮ 30  31  32 │ │ 33  34  35 ╭───────╯
                 ╰────────────╯ ╰────────────╯        */
 
-      COMBO(slop_j, &kp J, 5 15, 40)
-      COMBO(slop_j, &kp J, 5 6, 40)
-      COMBO(slop_k, &kp K, 15 25, 40)
-      COMBO(slop_k, &kp K, 25 26, 40)
-      COMBO(slop_b, &kp B, 4 14, 40)
-      COMBO(slop_b, &kp B, 3 4, 40)
-      COMBO(slop_v, &kp V, 14 24, 40)
-      COMBO(slop_v, &kp V, 23 24, 40)
+      COMBO(slop_j1, &kp J, 5 15, 40, 0)
+      COMBO(slop_j2, &kp J, 5 6, 40, 0)
+      COMBO(slop_k1, &kp K, 15 25, 40, 0)
+      COMBO(slop_k2, &kp K, 25 26, 40, 0)
+      COMBO(slop_b1, &kp B, 4 14, 40, 0)
+      COMBO(slop_b2, &kp B, 3 4, 40, 0)
+      COMBO(slop_v1, &kp V, 14 24, 40, 0)
+      COMBO(slop_v2, &kp V, 23 24, 40, 0)
 
-      COMBO(capsword, &caps_word, 10 19, 40)
+      COMBO(capsword, &caps_word, 10 19, 40, 0)
       
-      COMBO(quote, &kp SQT, 16 17, 25)
-      COMBO(minus, &kp MINUS, 26 17, 40)
+      COMBO(quote, &kp SQT, 16 17, 25, 0)
+      COMBO(minus, &kp MINUS, 26 17, 40, 0)
 
-      COMBO(tab, &kp TAB, 12 13, 25)
-      COMBO(equal, &kp EQUAL, 12 23, 40)
+      COMBO(tab, &kp TAB, 12 13, 25, 0)
+      COMBO(equal, &kp EQUAL, 12 23, 40, 0)
 
-      COMBO(prevwin, AS(LG(UP)), 3 13, 40)
-      COMBO(nextwin, AS(LG(DOWN)), 6 16, 40)
-      //COMBO(lprn, G_LPRN, 3 13, 40)
-      //COMBO(rprn, G_RPRN, 6 16, 40)
-      //COMBO(lbrc, G_LBRC, 2 12, 40)
-      //COMBO(rbrc, G_RBRC, 7 17, 40)
+      COMBO(prevwin, AS(LG(UP)), 3 13, 40, 0)
+      COMBO(nextwin, AS(LG(DOWN)), 6 16, 40, 0)
 
-      COMBO(fnlayer, &mo NAVFN_L, 4 14, 40)
+      COMBO(under, G_UNDER, 31 32, 40, 0)
 
-      COMBO(under, &kp UNDER, 31 32, 40)
+      COMBO(del, G_DEL, 33 34, 40, 0)
 
-      COMBO(del, &kp DEL, 33 34, 40)
-
-      COMBO(settings, &sl STNGS_L, 6 7 8 9, 40)
+      COMBO(settings, &sl STNGS_L, 6 7 8 9, 40, 0)
     };
 
     behaviors {
@@ -102,7 +103,7 @@
         tapping-term-ms = <150>;
         quick-tap-ms = <150>;
         bindings = <&kp>, <&kp>;
-        hold-trigger-key-positions = <5 6 7 8 9 15 16 17 18 19 25 26 27 28 29>;
+        hold-trigger-key-positions = <5 6 7 8 9 15 16 17 18 19 25 26 27 28 29 31 32>;
       };
 
       prht: positional_right_hold_tap {
@@ -113,7 +114,18 @@
         tapping-term-ms = <150>;
         quick-tap-ms = <150>;
         bindings = <&kp>, <&kp>;
-        hold-trigger-key-positions = <0 1 2 3 4 10 11 12 13 14 20 21 22 23 24>;
+        hold-trigger-key-positions = <0 1 2 3 4 10 11 12 13 14 20 21 22 23 24 31 32>;
+      };
+
+      fhrm: fkey_home_row_mod {
+        compatible = "zmk,behavior-hold-tap";
+        label = "FKEY_HOME_ROW_MOD";
+        #binding-cells = <2>;
+        flavor = "balanced";
+        tapping-term-ms = <150>;
+        quick-tap-ms = <150>;
+        bindings = <&kp>, <&kp>;
+        hold-trigger-key-positions = <16 17 18 19 33 34>;
       };
 
       ght: gerrys_hold_tap {
@@ -173,7 +185,7 @@
 		navfn_layer {
 			bindings = <
         &trans       &trans        &trans       &trans              &trans                /*& &*/     &kp C_VOL_UP        &kp F4           &kp F5                   &kp F6        &kp F11   
-        &trans       &trans        &trans       &trans              &trans                /*& &*/     &kp K_MUTE          &kp F1           &kp F2                   &kp F3        &kp F10
+        &kp LSHFT    &kp LGUI      &kp LALT     &kp LCTRL           &trans                /*& &*/     &kp K_MUTE          G_F1             G_F2                     G_F3          G_F10
         &trans       &trans        &trans       &trans              &trans                /*& &*/     &kp C_VOL_DN        &kp F7           &kp F8                   &kp F9        &kp F12
         /*&    &*/                     &trans        &trans             &trans            /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
