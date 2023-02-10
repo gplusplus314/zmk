@@ -38,8 +38,8 @@
 #define AS2(key1, key2) &as key2 key1           // Custom Autoshift Macro
 #define G_LPRN AS2(LS(N9), LS(COMMA))
 #define G_RPRN AS2(LS(N0), LS(DOT))
-#define G_LBRC AS2(LS(LBKT), LBKT)
-#define G_RBRC AS2(LS(RBKT), RBKT)
+#define G_LBKT AS2(LBKT, LS(LBKT))
+#define G_RBKT AS2(RBKT, LS(RBKT))
 
 &sl {
   release-after-ms = <3000>;
@@ -67,31 +67,36 @@
         ╰───────╮ 30  31  32 │ │ 33  34  35 ╭───────╯
                 ╰────────────╯ ╰────────────╯        */
 
-      COMBO(slop_j1, &kp J, 5 15, 40, 0)
-      COMBO(slop_j2, &kp J, 5 6, 40, 0)
-      COMBO(slop_k1, &kp K, 15 25, 40, 0)
-      COMBO(slop_k2, &kp K, 25 26, 40, 0)
-      COMBO(slop_b1, &kp B, 4 14, 40, 0)
-      COMBO(slop_b2, &kp B, 3 4, 40, 0)
-      COMBO(slop_v1, &kp V, 14 24, 40, 0)
-      COMBO(slop_v2, &kp V, 23 24, 40, 0)
+      COMBO(slop_j1, &kp J, 5 15, 35, 0)
+      COMBO(slop_j2, &kp J, 5 6, 35, 0)
+      COMBO(slop_k1, &kp K, 15 25, 35, 0)
+      COMBO(slop_k2, &kp K, 25 26, 35, 0)
+      COMBO(slop_b1, &kp B, 4 14, 35, 0)
+      COMBO(slop_b2, &kp B, 3 4, 35, 0)
+      COMBO(slop_v1, &kp V, 14 24, 35, 0)
+      COMBO(slop_v2, &kp V, 23 24, 35, 0)
 
-      COMBO(capsword, &caps_word, 10 19, 40, 0)
+      COMBO(capsword, &caps_word, 10 19, 35, 0)
       
       COMBO(quote, &kp SQT, 16 17, 25, 0)
-      COMBO(minus, &kp MINUS, 26 17, 40, 0)
+      COMBO(minus, &kp MINUS, 26 17, 35, 0)
 
       COMBO(tab, &kp TAB, 12 13, 25, 0)
-      COMBO(equal, &kp EQUAL, 12 23, 40, 0)
+      COMBO(equal, &kp EQUAL, 12 23, 35, 0)
 
-      COMBO(prevwin, AS(LG(UP)), 3 13, 40, 0)
-      COMBO(nextwin, AS(LG(DOWN)), 6 16, 40, 0)
+      COMBO(prevwin, AS(LG(UP)), 3 13, 35, 0)
+      COMBO(nextwin, AS(LG(DOWN)), 6 16, 35, 0)
 
-      COMBO(under, G_UNDER, 31 32, 40, 0)
+      COMBO(lprh, G_LPRN, 2 13, 35, 0)
+      COMBO(rprh, G_RPRN, 7 16, 35, 0)
+      COMBO(lbkt, G_LBKT, 2 3, 35, 0)
+      COMBO(rbkt, G_RBKT, 6 7, 35, 0)
 
-      COMBO(del, G_DEL, 33 34, 40, 0)
+      COMBO(under, G_UNDER, 31 32, 35, 0)
 
-      COMBO(settings, &sl STNGS_L, 6 7 8 9, 40, 0)
+      COMBO(del, G_DEL, 33 34, 35, 0)
+
+      COMBO(settings, &sl STNGS_L, 6 7 8 9, 35, 0)
     };
 
     behaviors {
@@ -177,7 +182,7 @@
 			bindings = <
         &trans       &kp HOME      &kp UP       &kp END             AS(EQUAL)             /*& &*/     AS(LBKT)            AS(N4)           AS(N5)                   AS(N6)        &prht RGUI DOT
         &trans       &kp LEFT      &kp DOWN     &kp RIGHT           AS(MINUS)             /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)                   AS(N3)        G_N0
-        &trans       G_LBRC        G_LPRN       G_RPRN              G_RBRC                /*& &*/     AS(RBKT)            AS(N7)           AS(N8)                   AS(N9)        AS(BSLH)
+        &trans       G_LBKT        G_LPRN       G_RPRN              G_RBKT                /*& &*/     AS(RBKT)            AS(N7)           AS(N8)                   AS(N9)        AS(BSLH)
         /*&    &*/                     &trans        &trans             &trans            /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
 		};
