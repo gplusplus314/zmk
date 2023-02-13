@@ -19,10 +19,12 @@
 #define STNGS_L   4
 
 #define G_Q     &plht LGUI         Q
+#define G_R     &plht LGUI         R
 #define G_A     &plht LSHFT        A
 #define G_O     &prht RSHFT        O
 #define G_N0    &prht RSHFT        N0
 #define G_SEMI  &prht RGUI         SEMI
+#define G_I     &prht RGUI         I
 #define G_SPC   &ght  LCTRL        SPC
 #define G_ESC   &ght  LALT         ESC
 #define G_RET   &glt  WM_L         RET
@@ -38,8 +40,8 @@
 #define AS2(key1, key2) &as key2 key1           // Custom Autoshift Macro
 #define G_LPRN AS2(LS(N9), LS(COMMA))
 #define G_RPRN AS2(LS(N0), LS(DOT))
-#define G_LBKT AS2(LBKT, LS(LBKT))
-#define G_RBKT AS2(RBKT, LS(RBKT))
+#define G_LBKT AS(LBKT)
+#define G_RBKT AS(RBKT)
 
 &sl {
   release-after-ms = <3000>;
@@ -60,43 +62,33 @@
 
       /*                KEY POSITIONS
 
-        ╭────────────────────╮ ╭────────────────────╮
-        │  0   1   2   3   4 │ │  5   6   7   8   9 │
-        │ 10  11  12  13  14 │ │ 15  16  17  18  19 │
-        │ 20  21  22  23  24 │ │ 25  26  27  28  29 │
-        ╰───────╮ 30  31  32 │ │ 33  34  35 ╭───────╯
-                ╰────────────╯ ╰────────────╯        */
+        ╭────────────────────────╮  ╭────────────────────────╮
+        │  0   1   2   3   4     │  │      5   6   7   8   9 │
+        │ 10  11  12  13  14     │  │     15  16  17  18  19 │
+        │ 20  21  22  23  24     │  │     25  26  27  28  29 │
+        ╰───────────╮ 30  31  32 │  │ 33  34  35 ╭───────────╯
+                    ╰────────────╯  ╰────────────╯        */
 
-      COMBO(slop_j1, &kp J, 5 15, 35, 0)
-      COMBO(slop_j2, &kp J, 5 6, 35, 0)
-      COMBO(slop_k1, &kp K, 15 25, 35, 0)
-      COMBO(slop_k2, &kp K, 25 26, 35, 0)
-      COMBO(slop_b1, &kp B, 4 14, 35, 0)
-      COMBO(slop_b2, &kp B, 3 4, 35, 0)
-      COMBO(slop_v1, &kp V, 14 24, 35, 0)
-      COMBO(slop_v2, &kp V, 23 24, 35, 0)
-
-      COMBO(capsword, &caps_word, 10 19, 35, 0)
+      COMBO(capsword, &caps_word, 10 19, 35, BASE_L)
       
-      COMBO(quote, &kp SQT, 16 17, 25, 0)
-      COMBO(minus, &kp MINUS, 26 17, 35, 0)
+      COMBO(tab, AS(TAB), 12 13, 25, BASE_L NAVSYM_L)
+      COMBO(minus, AS(MINUS), 12 23, 35, BASE_L NAVSYM_L)
 
-      COMBO(tab, &kp TAB, 12 13, 25, 0)
-      COMBO(equal, &kp EQUAL, 12 23, 35, 0)
+      COMBO(quote, AS(SQT), 16 17, 25, BASE_L)
+      COMBO(equal, AS(EQUAL), 26 17, 35, BASE_L)
 
-      COMBO(prevwin, AS(LG(UP)), 3 13, 35, 0)
-      COMBO(nextwin, AS(LG(DOWN)), 6 16, 35, 0)
+      COMBO(prevwin, AS(LG(UP)), 4 14, 35, BASE_L)
+      COMBO(nextwin, AS(LG(DOWN)), 5 15, 35, BASE_L)
+      COMBO(lprh, G_LPRN, 3 13, 35, BASE_L)
+      COMBO(rprh, G_RPRN, 6 16, 35, BASE_L)
+      COMBO(lbkt, G_LBKT, 2 12, 35, BASE_L)
+      COMBO(rbkt, G_RBKT, 7 17, 35, BASE_L)
 
-      COMBO(lprh, G_LPRN, 2 13, 35, 0)
-      COMBO(rprh, G_RPRN, 7 16, 35, 0)
-      COMBO(lbkt, G_LBKT, 2 3, 35, 0)
-      COMBO(rbkt, G_RBKT, 6 7, 35, 0)
+      COMBO(under, G_UNDER, 31 32, 35, BASE_L)
 
-      COMBO(under, G_UNDER, 31 32, 35, 0)
+      COMBO(del, G_DEL, 33 34, 35, BASE_L)
 
-      COMBO(del, G_DEL, 33 34, 35, 0)
-
-      COMBO(settings, &sl STNGS_L, 6 7 8 9, 35, 0)
+      COMBO(settings, &sl STNGS_L, 6 7 8 9, 35, BASE_L)
     };
 
     behaviors {
@@ -171,8 +163,8 @@
 
 		base_layer {
 			bindings = <
-        G_Q          &kp W         &kp F         &kp P              &kp B         /*& &*/     &kp J               &kp L            &kp U                    &kp Y         G_SEMI
-        G_A          &kp R         &kp S         &kp T              &kp G         /*& &*/     &kp M               &kp N            &kp E                    &kp I         G_O
+        &kp Q        &kp W         &kp F         &kp P              &kp B         /*& &*/     &kp J               &kp L            &kp U                    &kp Y         AS(SEMI)
+        G_A          G_R           &kp S         &kp T              &kp G         /*& &*/     &kp M               &kp N            &kp E                    G_I           G_O
         &kp Z        &kp X         &kp C         &kp D              &kp V         /*& &*/     &kp K               &kp H            AS(COMMA)                AS(DOT)       AS(FSLH)
         /*&    &*/                     &trans        G_SPC              G_ESC     /*& &*/ G_RET          G_BSPC           &trans                /* &             &*/
 			>;
@@ -180,9 +172,9 @@
 
 		navsym_layer {
 			bindings = <
-        &trans       &kp HOME      &kp UP       &kp END             AS(EQUAL)             /*& &*/     AS(LBKT)            AS(N4)           AS(N5)                   AS(N6)        &prht RGUI DOT
-        &trans       &kp LEFT      &kp DOWN     &kp RIGHT           AS(MINUS)             /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)                   AS(N3)        G_N0
-        &trans       G_LBKT        G_LPRN       G_RPRN              G_RBKT                /*& &*/     AS(RBKT)            AS(N7)           AS(N8)                   AS(N9)        AS(BSLH)
+        &trans       &kp HOME      &kp UP       &kp END             &kp PG_UP             /*& &*/     AS(EQUAL)           AS(N4)           AS(N5)                   AS(N6)        AS(DOT)
+        &trans       &kp LEFT      &kp DOWN     &kp RIGHT           &kp PG_DN             /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)                   AS(N3)        AS(N0)
+        &trans       G_LBKT        G_LPRN       G_RPRN              G_RBKT                /*& &*/     AS(MINUS)           AS(N7)           AS(N8)                   AS(N9)        AS(BSLH)
         /*&    &*/                     &trans        &trans             &trans            /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
 		};
@@ -201,7 +193,7 @@
         &trans       &trans        &trans        &trans             &trans         /*& &*/     &trans              AS(LG(N4))       AS(LG(N5))               AS(LG(N6))    AS(LG(RIGHT))
         &trans       &trans        &trans        &trans             &trans         /*& &*/     &trans              AS(LG(N1))       AS(LG(N2))               AS(LG(N3))    AS(LG(N0))    
         &trans       &trans        &trans        &trans             &trans         /*& &*/     &trans              AS(LG(N7))       AS(LG(N8))               AS(LG(N9))    AS(LG(LEFT))
-        /*&    &*/                     &trans &ght LCTRL LC(SPC) &ght LALT LG(SPC) /*& &*/ &trans         &trans           &trans                /* &             &*/
+        /*&    &*/                     &trans &ght LCTRL LC(SPC) &ght LALT LA(ESC) /*& &*/ &trans         &trans           &trans                /* &             &*/
 			>;
 		};
 
