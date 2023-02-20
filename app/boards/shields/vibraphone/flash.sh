@@ -18,6 +18,7 @@ do
   sleep 1
   echo "Waiting for $MOUNT_POINT to be mounted..."
 done
+echo "Flashing..."
 
 cp ../../../../app/build/left/zephyr/zmk.uf2 "$MOUNT_POINT"
 
