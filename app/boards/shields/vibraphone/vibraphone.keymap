@@ -20,13 +20,16 @@
 
 // TODO: experiment with shift on `LTI`
 
-#define G_Q     &plht LGUI         Q
-#define G_R     &plht LGUI         R
-#define G_A     &plht LSHFT        A
-#define G_O     &prht RSHFT        O
-#define G_N0    &prht RSHFT        N0
-#define G_SEMI  &prht RGUI         SEMI
-#define G_I     &prht RGUI         I
+#define G_A     &lhrm LSHFT        A
+#define G_R     &lhrm LGUI         R
+#define G_S     &lhrm LALT         S
+#define G_T     &lhrm LCTRL        T
+
+#define G_N     &rhrm RCTRL        N
+#define G_E     &rhrm RALT         E
+#define G_I     &rhrm RGUI         I
+#define G_O     &rhrm RSHFT        O
+
 #define G_SPC   &ght  LCTRL        SPC
 #define G_ESC   &ght  LALT         ESC
 #define G_RET   &glt  WM_L         RET
@@ -195,7 +198,7 @@
 		base_layer {
 			bindings = <
         &kp Q        &kp W         &kp F         &kp P              &kp B         /*& &*/     &kp J               &kp L            &kp U                    &kp Y         AS(SEMI)
-        G_A          G_R           &kp S         &kp T              &kp G         /*& &*/     &kp M               &kp N            &kp E                    G_I           G_O
+        G_A          G_R           G_S           G_T                &kp G         /*& &*/     &kp M               G_N              G_E                      G_I           G_O
         &kp Z        &kp X         &kp C         &kp D              &kp V         /*& &*/     &kp K               &kp H            AS(COMMA)                AS(DOT)       AS(FSLH)
         /*&    &*/                     &trans        G_SPC              G_ESC     /*& &*/ G_RET          G_BSPC           &trans                /* &             &*/
 			>;
