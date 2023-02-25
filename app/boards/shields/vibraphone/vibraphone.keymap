@@ -2,61 +2,88 @@
  * Copyright (c) 2021 The ZMK Contributors
  *
  * SPDX-License-Identifier: MIT
+ *
  */
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 
+// Global Settings {{{
 &caps_word {
     continue-list = <UNDERSCORE MINUS BSPC>;
 };
 
+&sl {
+  release-after-ms = <3000>;
+};
+//}}}
+
+// Layer Indices {{{
 #define BASE_L    0
 #define NAVSYM_L  1
 #define NAVFN_L   2
 #define WM_L      3
 #define STNGS_L   4
+//}}}
 
-// TODO: experiment with shift on `LTI`
-
-#define G_A     &lhrm LSHFT        A
-#define G_R     &lhrm LGUI         R
-#define G_S     &lhrm LALT         S
-#define G_T     &lhrm LCTRL        T
-
-#define G_N     &rhrm RCTRL        N
-#define G_E     &rhrm RALT         E
-#define G_I     &rhrm RGUI         I
-#define G_O     &rhrm RSHFT        O
-
-#define G_SPC   &ght  LCTRL        SPC
-#define G_ESC   &ght  LALT         ESC
-#define G_RET   &glt  WM_L         RET
-#define G_BSPC  &glt  NAVSYM_L     BSPC
-#define G_DEL   &glt  NAVFN_L      DEL
-#define G_F10   &prht RSHFT        F10
-#define G_F3    &prht RGUI         F3
-#define G_F2    &prht RALT         F2
-#define G_F1    &prht RCTRL        F1
-#define G_UNDER &ght LA(LCTRL)     UNDER
+// High level key definitions {{{
 
 #define AS(keycode) &as LS(keycode) keycode     // Standard Autoshift Macro
 #define AS2(key1, key2) &as key2 key1           // Custom Autoshift Macro
+
+// Autoshifted Brackets
 #define G_LPRN AS2(LS(N9), LS(COMMA))
 #define G_RPRN AS2(LS(N0), LS(DOT))
 #define G_LBKT AS(LBKT)
 #define G_RBKT AS(RBKT)
 
-&sl {
-  release-after-ms = <3000>;
-};
+// Left home row mods {{{
+#define G_A     &lhrm LSHFT        A
+#define G_R     &lhrm LGUI         R
+#define G_S     &lhrm LALT         S
+#define G_T     &lhrm LCTRL        T
+//}}}
+
+// Right home row mods {{{
+#define G_N     &rhrm RCTRL        N
+#define G_E     &rhrm RALT         E
+#define G_I     &rhrm RGUI         I
+#define G_O     &rhrm RSHFT        O
+#define G_F1    &prht RCTRL        F1
+#define G_F2    &prht RALT         F2
+#define G_F3    &prht RGUI         F3
+#define G_F10   &prht RSHFT        F10
+//}}}
+
+// Left thumb {{{
+#define G_SPC   &ght  LCTRL        SPC
+#define G_ESC   &ght  LALT         ESC
+#define G_UNDER &ght LA(LCTRL)     UNDER
+//}}}
+
+// Right thumb {{{
+#define G_RET   &glt  WM_L         RET
+#define G_BSPC  &glt  NAVSYM_L     BSPC
+#define G_DEL   &glt  NAVFN_L      DEL
+//}}}
+
+//}}}
 
 / {
+    /*                   KEY POSITIONS
+    ╭────────────────────────╮  ╭────────────────────────╮
+    │  0   1   2   3   4     │  │      5   6   7   8   9 │
+    │ 10  11  12  13  14     │  │     15  16  17  18  19 │
+    │ 20  21  22  23  24     │  │     25  26  27  28  29 │
+    ╰───────────╮ 30  31  32 │  │ 33  34  35 ╭───────────╯
+                ╰────────────╯  ╰────────────╯            */
+
+    // Combos {{{
     combos {
       compatible = "zmk,combos";
 
-      // shortcut
+      // Combo definition macro {{{
       #define COMBO(NAME, BINDINGS, KEYPOS, TIMEOUT, LAYERS) \
       combo_##NAME { \
         timeout-ms = <TIMEOUT>; \
@@ -64,15 +91,7 @@
         key-positions = <KEYPOS>; \
         layers = <LAYERS>; \
       };
-
-      /*                KEY POSITIONS
-
-        ╭────────────────────────╮  ╭────────────────────────╮
-        │  0   1   2   3   4     │  │      5   6   7   8   9 │
-        │ 10  11  12  13  14     │  │     15  16  17  18  19 │
-        │ 20  21  22  23  24     │  │     25  26  27  28  29 │
-        ╰───────────╮ 30  31  32 │  │ 33  34  35 ╭───────────╯
-                    ╰────────────╯  ╰────────────╯        */
+      //}}}
 
       COMBO(capsword, &caps_word, 10 19, 35, BASE_L)
       
@@ -102,7 +121,9 @@
       COMBO(lhyper, &kp LS(LC(LA(LGUI))), 14 24, 35, BASE_L)
       COMBO(rhyper, &kp RS(RC(RA(RGUI))), 15 25, 35, BASE_L)
     };
+    //}}}
 
+    // Behaviors {{{
     behaviors {
       plht: positional_left_hold_tap {
         compatible = "zmk,behavior-hold-tap";
@@ -189,9 +210,10 @@
         flavor = "tap-preferred";
         bindings = <&kp>, <&kp>;
       };
-
     };
-
+    //}}}
+  
+  // Keymap {{{
 	keymap {
 		compatible = "zmk,keymap";
 
@@ -250,4 +272,6 @@
 		};
 
 	};
+  //}}}
+
 };
