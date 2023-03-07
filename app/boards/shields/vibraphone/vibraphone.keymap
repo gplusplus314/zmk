@@ -8,6 +8,7 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/outputs.h>
 
 // Global Settings {{{
 &caps_word {
@@ -15,18 +16,22 @@
 };
 
 &sl {
-  release-after-ms = <3000>;
+  release-after-ms = <1000>;
 };
 //}}}
 
 // Layer Indices {{{
 #define L_BASE    0
 #define L_ASALPHA 1
-#define L_NAVSYM  2
-#define L_FN      3
-#define L_WM      4
-#define L_STNGS   5
-#define L_TRANS   6
+#define L_GAME1   2
+#define L_GAME2   3
+#define L_NAVSYM  4
+#define L_FN      5
+#define L_WM      6
+#define L_STNGS   7
+#define L_TRANS   8
+
+#define ALPHA_LAYERS L_BASE L_ASALPHA
 //}}}
 
 // High level key definitions {{{
@@ -99,18 +104,22 @@
       //}}}
 
       // Intentionally out-of-the-way settings layer.
-      COMBO(settings, &sl L_STNGS, 6 7 8 9, 35, L_BASE L_ASALPHA)
+      COMBO(settings, &sl L_STNGS, 6 7 8 9, 35, ALPHA_LAYERS)
 
       // Both pinkies for smart caps
-      COMBO(capsword, &caps_word, 10 19, 35, L_BASE L_ASALPHA)
+      COMBO(capsword, &caps_word, 10 19, 35, ALPHA_LAYERS)
 
       // Fallback shift when autoshift is on
-      COMBO(lshft, &kp LSHFT, 10 11, 35, L_BASE L_ASALPHA)
-      COMBO(rshft, &kp RSHFT, 18 19, 35, L_BASE L_ASALPHA)
+      COMBO(lshft, &kp LSHFT, 10 11, 35, ALPHA_LAYERS)
+      COMBO(rshft, &kp RSHFT, 18 19, 35, ALPHA_LAYERS)
+
+      // Nudge left/right without switching layers
+      COMBO(larrow, &kp LEFT, 2 3, 35, ALPHA_LAYERS)
+      COMBO(rarrow, &kp RIGHT, 6 7, 35, ALPHA_LAYERS)
       
       // Use most comfortable combo for most frequent non-alpha chars:
-      COMBO(tab, AS(TAB), 12 13, 25, L_BASE L_NAVSYM)
-      COMBO(quote, AS(SQT), 16 17, 25, L_BASE)
+      COMBO(tab, AS(TAB), 12 13, 25, L_NAVSYM ALPHA_LAYERS)
+      COMBO(quote, AS(SQT), 16 17, 25, ALPHA_LAYERS)
 
       // Put - and = on easy, radially symmetric combos
       COMBO(minus_l, AS(MINUS), 11 12, 25, L_BASE L_NAVSYM)
@@ -270,37 +279,55 @@ that are either low frequency or special use. Examples:
 
 		base_layer {
 			bindings = <
-        &kp Q        &kp W         &kp F         &kp P              &kp B         /*& &*/     &kp J               &kp L            &kp U              &kp Y         AS(SEMI)
-        G_A          &kp R         &kp S         &kp T              &kp G         /*& &*/     &kp M               &kp N            &kp E              &kp I         G_O
-        &kp Z        &kp X         &kp C         &kp D              &kp V         /*& &*/     &kp K               &kp H            AS(COMMA)          AS(DOT)       AS(FSLH)
-                                       &trans        G_SPC              G_ESC     /*& &*/ G_RET          G_BSPC           &trans
+        &kp Q        &kp W         &kp F         &kp P           &kp B         /*& &*/     &kp J               &kp L            &kp U              &kp Y         AS(SEMI)
+        G_A          &kp R         &kp S         &kp T           &kp G         /*& &*/     &kp M               &kp N            &kp E              &kp I         G_O
+        &kp Z        &kp X         &kp C         &kp D           &kp V         /*& &*/     &kp K               &kp H            AS(COMMA)          AS(DOT)       AS(FSLH)
+                                       &tog L_GAME1  G_SPC           G_ESC     /*& &*/ G_RET          G_BSPC           &trans
 			>;
 		};
 
 		asalpha_layer {
 			bindings = <
-        AS(Q)        AS(W)         AS(F)         AS(P)              AS(B)         /*& &*/     AS(J)               AS(L)            AS(U)              AS(Y)         AS(SEMI)
-        AS(A)        AS(R)         AS(S)         AS(T)              AS(G)         /*& &*/     AS(M)               AS(N)            AS(E)              AS(I)         AS(O)
-        AS(Z)        AS(X)         AS(C)         AS(D)              AS(V)         /*& &*/     AS(K)               AS(H)            AS(COMMA)          AS(DOT)       AS(FSLH)
-                                       &trans        &trans             &trans    /*& &*/ &trans         &trans           &trans
+        AS(Q)        AS(W)         AS(F)         AS(P)           AS(B)         /*& &*/     AS(J)               AS(L)            AS(U)              AS(Y)         AS(SEMI)
+        AS(A)        AS(R)         AS(S)         AS(T)           AS(G)         /*& &*/     AS(M)               AS(N)            AS(E)              AS(I)         AS(O)
+        AS(Z)        AS(X)         AS(C)         AS(D)           AS(V)         /*& &*/     AS(K)               AS(H)            AS(COMMA)          AS(DOT)       AS(FSLH)
+                                       &tog L_GAME1  &trans          &trans    /*& &*/ &trans         &trans           &trans
+			>;
+		};
+
+		game1_layer {
+			bindings = <
+        &kp Q          &kp W         &kp F         &kp P           &kp B         /*& &*/     &trans              &trans           &trans         &trans        &trans 
+        &kp A          &kp R         &kp S         &kp T           &kp G         /*& &*/     &trans              &trans           &trans         &trans        &trans 
+        &glt L_GAME2 Z &kp X         &kp C         &kp D           &kp V         /*& &*/     &trans              &trans           &trans         &trans        &trans 
+                                       &kp LSHFT       &kp SPC         &kp LCTRL /*& &*/ &trans         &trans           &tog L_GAME1                                       
+			>;
+		};
+
+		game2_layer {
+			bindings = <
+        &kp ESC      &kp N6        &kp N5        &kp N4          &kp UP        /*& &*/     &trans              &trans           &trans         &trans        &trans
+        &kp TAB      &kp N3        &kp N2        &kp N1          &kp N0        /*& &*/     &trans              &trans           &trans         &trans        &trans
+        &trans       &kp N9        &kp N8        &kp N7          &kp DOWN      /*& &*/     &trans              &trans           &trans         &trans        &trans
+                                       &trans        &trans          &trans    /*& &*/ &trans         &trans           &trans
 			>;
 		};
 
 		navsym_layer {
 			bindings = <
-        &trans       &kp HOME      &kp UP       &kp END             &kp PG_UP   /*& &*/     AS(LBKT)            AS(N4)           AS(N5)             AS(N6)        AS(DOT)
-        G_A          &kp LEFT      &kp DOWN     &kp RIGHT           &kp PG_DN   /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)             AS(N3)        AS(N0)
-        &trans       G_LBKT        G_LPRN       G_RPRN              G_RBKT      /*& &*/     AS(RBKT)            AS(N7)           AS(N8)             AS(N9)        AS(BSLH)
-                                       &trans        &trans             &trans  /*& &*/ &trans         &trans           &trans
+        &trans       &kp HOME      &kp UP       &kp END          &kp PG_UP   /*& &*/     AS(LBKT)            AS(N4)           AS(N5)             AS(N6)        AS(DOT)
+        G_A          &kp LEFT      &kp DOWN     &kp RIGHT        &kp PG_DN   /*& &*/     AS(GRAVE)           AS(N1)           AS(N2)             AS(N3)        AS(N0)
+        &trans       G_LBKT        G_LPRN       G_RPRN           G_RBKT      /*& &*/     AS(RBKT)            AS(N7)           AS(N8)             AS(N9)        AS(BSLH)
+                                       &trans        &trans          &trans  /*& &*/ &trans         &trans           &trans
 			>;
 		};
 
 		fn_layer {
 			bindings = <
-        &trans       &trans        &trans       &trans              &trans      /*& &*/     &kp F13          &kp F4           &kp F5             &kp F6        &kp F11   
-        &kp LALT     &kp LGUI      &kp LCTRL    &kp LSHFT           &trans      /*& &*/     &kp F14          G_F1             G_F2               G_F3          G_F10
-        &trans       &trans        &trans       &trans              &trans      /*& &*/     &kp F15          &kp F7           &kp F8             &kp F9        &kp F12
-                                       &trans        G_SPC_R            G_ESC_R /*& &*/ &trans         &trans           &trans
+        &trans       &trans        &trans       &trans           &trans      /*& &*/     &kp F13          &kp F4           &kp F5             &kp F6        &kp F11   
+        &kp LALT     &kp LGUI      &kp LCTRL    &kp LSHFT        &trans      /*& &*/     &kp F14          G_F1             G_F2               G_F3          G_F10
+        &trans       &trans        &trans       &trans           &trans      /*& &*/     &kp F15          &kp F7           &kp F8             &kp F9        &kp F12
+                                       &trans        G_SPC_R         G_ESC_R /*& &*/ &trans         &trans           &trans
 			>;
 		};
 
@@ -316,18 +343,18 @@ that are either low frequency or special use. Examples:
 		settings_layer {
 			bindings = <
         &trans       &trans        &bt BT_SEL 4  &bt BT_SEL 3       &bt BT_CLR    /*& &*/     &trans              &trans           &trans         &trans        &trans
-        &trans       &bt BT_SEL 2  &bt BT_SEL 1  &bt BT_SEL 0       &trans        /*& &*/     &trans              &tog L_ASALPHA   &trans         &trans        &trans
-        &trans       &trans        &trans        &trans             &trans        /*& &*/     &trans              &trans           &trans         &trans        &trans
+        &trans       &bt BT_SEL 2  &bt BT_SEL 1  &bt BT_SEL 0       &out OUT_BLE  /*& &*/     &trans              &tog L_ASALPHA   &trans         &trans        &trans
+        &trans       &trans        &trans        &trans             &out OUT_USB  /*& &*/     &trans              &trans           &trans         &trans        &trans
                                        &trans        &trans             &trans    /*& &*/ &trans         &trans           &trans
 			>;
 		};
 
 		trans_layer {
 			bindings = <
-        &trans       &trans        &trans        &trans             &trans        /*& &*/     &trans              &trans           &trans         &trans        &trans
-        &trans       &trans        &trans        &trans             &trans        /*& &*/     &trans              &trans           &trans         &trans        &trans
-        &trans       &trans        &trans        &trans             &trans        /*& &*/     &trans              &trans           &trans         &trans        &trans
-                                       &trans        &trans             &trans    /*& &*/ &trans         &trans           &trans
+        &trans       &trans        &trans        &trans          &trans        /*& &*/     &trans              &trans           &trans         &trans        &trans
+        &trans       &trans        &trans        &trans          &trans        /*& &*/     &trans              &trans           &trans         &trans        &trans
+        &trans       &trans        &trans        &trans          &trans        /*& &*/     &trans              &trans           &trans         &trans        &trans
+                                       &trans        &trans          &trans    /*& &*/ &trans         &trans           &trans
 			>;
 		};
 

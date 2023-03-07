@@ -22,4 +22,10 @@ echo "Flashing..."
 
 cp ../../../../app/build/left/zephyr/zmk.uf2 "$MOUNT_POINT"
 
+until [ ! -d "$MOUNT_POINT" ]
+do
+  sleep 1
+  echo "Waiting for $MOUNT_POINT to be unmounted..."
+done
+
 echo "Done flashing!"
