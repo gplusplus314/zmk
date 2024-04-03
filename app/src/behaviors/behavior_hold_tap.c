@@ -113,9 +113,9 @@ struct captured_event captured_events[ZMK_BHV_HOLD_TAP_MAX_CAPTURED_EVENTS] = {}
 // Keep track of which key was tapped most recently for the standard, if it is a hold-tap
 // a position, will be given, if not it will just be INT32_MIN
 struct last_tapped {
-    int32_t  position;
-    int64_t  timestamp;
-		uint32_t keycode;
+    int32_t position;
+    int64_t timestamp;
+    uint32_t keycode;
 };
 
 // Set time stamp to large negative number initially for test suites, but not
@@ -126,7 +126,7 @@ static void store_last_tapped(int64_t timestamp, uint32_t keycode) {
     if (timestamp > last_tapped.timestamp) {
         last_tapped.position = INT32_MIN;
         last_tapped.timestamp = timestamp;
-				last_tapped.keycode = keycode;
+        last_tapped.keycode = keycode;
     }
 }
 
@@ -137,7 +137,8 @@ static void store_last_hold_tapped(struct active_hold_tap *hold_tap) {
 
 static bool is_quick_tap(struct active_hold_tap *hold_tap) {
     if ((last_tapped.timestamp + hold_tap->config->require_prior_idle_ms) > hold_tap->timestamp) {
-        return last_tapped.keycode != HID_USAGE_KEY_KEYBOARD_SPACEBAR;
+        return last_tapped.keycode != HID_USAGE_KEY_KEYBOARD_SPACEBAR &&
+               last_tapped != HID_USAGE_KEY_KEYBOARD_DELETE_BACKSPACE;
     } else {
         return (last_tapped.position == hold_tap->position) &&
                (last_tapped.timestamp + hold_tap->config->quick_tap_ms) > hold_tap->timestamp;
