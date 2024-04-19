@@ -137,8 +137,9 @@ static void store_last_hold_tapped(struct active_hold_tap *hold_tap) {
 
 static bool is_quick_tap(struct active_hold_tap *hold_tap) {
     if ((last_tapped.timestamp + hold_tap->config->require_prior_idle_ms) > hold_tap->timestamp) {
+
         return last_tapped.keycode != HID_USAGE_KEY_KEYBOARD_SPACEBAR &&
-               last_tapped != HID_USAGE_KEY_KEYBOARD_DELETE_BACKSPACE;
+               last_tapped.keycode != HID_USAGE_KEY_KEYBOARD_DELETE_BACKSPACE;
     } else {
         return (last_tapped.position == hold_tap->position) &&
                (last_tapped.timestamp + hold_tap->config->quick_tap_ms) > hold_tap->timestamp;
