@@ -63,8 +63,10 @@ struct behavior_hold_tap_config {
     bool hold_while_undecided_linger;
     bool retro_tap;
     bool hold_trigger_on_release;
-    int32_t hold_trigger_key_positions_len;
-    int32_t hold_trigger_key_positions[];
+    size_t hold_trigger_key_positions_len;
+    const int32_t *hold_trigger_key_positions;
+    size_t idle_trigger_key_codes_len;
+    const int32_t *idle_trigger_key_codes;
 };
 
 struct behavior_hold_tap_data {
@@ -89,6 +91,8 @@ struct active_hold_tap {
 
     // initialized to -1, which is to be interpreted as "no other key has been pressed yet"
     int32_t position_of_first_other_key_pressed;
+
+    uint32_t preceeding_keycode;
 };
 
 // The undecided hold tap is the hold tap that needs to be decided before
@@ -123,31 +127,51 @@ struct captured_event captured_events[ZMK_BHV_HOLD_TAP_MAX_CAPTURED_EVENTS] = {}
 struct last_tapped {
     int32_t position;
     int64_t timestamp;
+    uint32_t keycode;
 };
 
 // Set time stamp to large negative number initially for test suites, but not
 // int64 min since it will overflow if -1 is added
-struct last_tapped last_tapped = {INT32_MIN, INT32_MIN};
+struct last_tapped last_tapped = {INT32_MIN, INT32_MIN, 0};
 
-static void store_last_tapped(int64_t timestamp) {
+static void store_last_tapped(int64_t timestamp, uint32_t keycode) {
     if (timestamp > last_tapped.timestamp) {
         last_tapped.position = INT32_MIN;
         last_tapped.timestamp = timestamp;
+        const uint32_t decoded_keycode = ZMK_HID_USAGE_ID(keycode);
+        last_tapped.keycode = decoded_keycode;
     }
 }
 
 static void store_last_hold_tapped(struct active_hold_tap *hold_tap) {
-    last_tapped.position = hold_tap->position;
-    last_tapped.timestamp = hold_tap->timestamp;
+    if (hold_tap->timestamp > last_tapped.timestamp) {
+        last_tapped.position = hold_tap->position;
+        last_tapped.timestamp = hold_tap->timestamp;
+        const uint32_t decoded_keycode = ZMK_HID_USAGE_ID(hold_tap->param_tap);
+        last_tapped.keycode = decoded_keycode;
+    }
+}
+
+static bool is_preceeded_by_idle_trigger(struct active_hold_tap *hold_tap) {
+    for (int i = 0; i < hold_tap->config->idle_trigger_key_codes_len; i++) {
+        const uint32_t idle_key_code = ZMK_HID_USAGE_ID(
+            hold_tap->config->idle_trigger_key_codes[i]); 
+        if (idle_key_code == hold_tap->preceeding_keycode) {
+            return true;
+        }
+    }
+    return false;
 }
 
 static bool is_quick_tap(struct active_hold_tap *hold_tap) {
     if ((last_tapped.timestamp + hold_tap->config->require_prior_idle_ms) > hold_tap->timestamp) {
-        return true;
-    } else {
-        return (last_tapped.position == hold_tap->position) &&
-               (last_tapped.timestamp + hold_tap->config->quick_tap_ms) > hold_tap->timestamp;
+        return !is_preceeded_by_idle_trigger(hold_tap);
     }
+    if (last_tapped.position == hold_tap->position &&
+        (last_tapped.timestamp + hold_tap->config->quick_tap_ms) > hold_tap->timestamp) {
+        return true;
+    }
+    return false;
 }
 
 static int capture_event(struct captured_event *data) {
@@ -269,6 +293,7 @@ static struct active_hold_tap *store_hold_tap(struct zmk_behavior_binding_event 
         active_hold_taps[i].param_tap = param_tap;
         active_hold_taps[i].timestamp = event->timestamp;
         active_hold_taps[i].position_of_first_other_key_pressed = -1;
+        active_hold_taps[i].preceeding_keycode = last_tapped.keycode;
         return &active_hold_taps[i];
     }
     return NULL;
@@ -492,31 +517,35 @@ static int release_binding(struct active_hold_tap *hold_tap) {
     }
 }
 
-static bool is_first_other_key_pressed_trigger_key(struct active_hold_tap *hold_tap) {
+static bool is_trigger_key(struct active_hold_tap *hold_tap, int32_t position) {
     for (int i = 0; i < hold_tap->config->hold_trigger_key_positions_len; i++) {
-        if (hold_tap->config->hold_trigger_key_positions[i] ==
-            hold_tap->position_of_first_other_key_pressed) {
+        if (hold_tap->config->hold_trigger_key_positions[i] == position) {
             return true;
         }
     }
     return false;
 }
 
+static bool is_first_other_key_pressed_trigger_key(struct active_hold_tap *hold_tap) {
+    return is_trigger_key(hold_tap, 
+        hold_tap->position_of_first_other_key_pressed);
+}
+
 // Force a tap decision if the positional conditions for a hold decision are not met.
 static void decide_positional_hold(struct active_hold_tap *hold_tap) {
-    // Only force a tap decision if the positional hold/tap feature is enabled.
-    if (!(hold_tap->config->hold_trigger_key_positions_len > 0)) {
+    // Do nothing if the positional hold/tap feature is not enabled.
+    if (hold_tap->config->hold_trigger_key_positions_len <= 0) {
         return;
     }
 
-    // Only force a tap decision if another key was pressed after
-    // the hold/tap key.
+    // If another key hasn't been pressed after the hold-tap key, don't force
+    // a tap decision yet.
     if (hold_tap->position_of_first_other_key_pressed == -1) {
         return;
     }
 
-    // Only force a tap decision if the first other key to be pressed
-    // (after the hold/tap key) is not one of the trigger keys.
+    // If the first other key to be pressed (after the hold-tap key) is one of 
+    // the trigger keys, don't force a tap decision.
     if (is_first_other_key_pressed_trigger_key(hold_tap)) {
         return;
     }
@@ -629,7 +658,6 @@ static int on_hold_tap_binding_pressed(struct zmk_behavior_binding *binding,
     if (is_quick_tap(hold_tap)) {
         decide_hold_tap(hold_tap, HT_QUICK_TAP);
     }
-
     decide_hold_tap(hold_tap, HT_KEY_DOWN);
 
     // if this behavior was queued we have to adjust the timer to only
@@ -790,7 +818,7 @@ static int keycode_state_changed_listener(const zmk_event_t *eh) {
     struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
 
     if (ev->state && !is_mod(ev->usage_page, ev->keycode)) {
-        store_last_tapped(ev->timestamp);
+        store_last_tapped(ev->timestamp, ev->keycode);
     }
 
     if (undecided_hold_tap == NULL) {
@@ -858,6 +886,10 @@ static int behavior_hold_tap_init(const struct device *dev) {
 }
 
 #define KP_INST(n)                                                                                 \
+    static int32_t behavior_hold_tap_config_hold_trigger_key_positions_##n[] =                     \
+        DT_INST_PROP(n, hold_trigger_key_positions);                                               \
+    static int32_t behavior_hold_tap_config_idle_trigger_key_codes_##n[] =                         \
+        DT_INST_PROP(n, idle_trigger_key_codes);                                                   \
     static const struct behavior_hold_tap_config behavior_hold_tap_config_##n = {                  \
         .tapping_term_ms = DT_INST_PROP(n, tapping_term_ms),                                       \
         .hold_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 0)),               \
@@ -871,8 +903,10 @@ static int behavior_hold_tap_init(const struct device *dev) {
         .hold_while_undecided_linger = DT_INST_PROP(n, hold_while_undecided_linger),               \
         .retro_tap = DT_INST_PROP(n, retro_tap),                                                   \
         .hold_trigger_on_release = DT_INST_PROP(n, hold_trigger_on_release),                       \
-        .hold_trigger_key_positions = DT_INST_PROP(n, hold_trigger_key_positions),                 \
+        .hold_trigger_key_positions = behavior_hold_tap_config_hold_trigger_key_positions_##n,     \
         .hold_trigger_key_positions_len = DT_INST_PROP_LEN(n, hold_trigger_key_positions),         \
+        .idle_trigger_key_codes = behavior_hold_tap_config_idle_trigger_key_codes_##n,             \
+        .idle_trigger_key_codes_len = DT_INST_PROP_LEN(n, idle_trigger_key_codes),                 \
     };                                                                                             \
     static struct behavior_hold_tap_data behavior_hold_tap_data_##n = {};                          \
     BEHAVIOR_DT_INST_DEFINE(n, behavior_hold_tap_init, NULL, &behavior_hold_tap_data_##n,          \
